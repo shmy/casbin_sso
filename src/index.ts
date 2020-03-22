@@ -67,7 +67,6 @@ const config: ConnectionOptions = {
     .use(rpcRouter.middleware())
     .use(router.middleware())
     .use(ctx => {
-      console.log(ctx.url)
       ctx.status = 404;
       ctx.body = {msg: 'not found'}
     });

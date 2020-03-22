@@ -1,4 +1,5 @@
 import {Context} from "koa";
+import {getConnection} from "typeorm";
 import CasbinUtil from "../util/casbin.util";
 import groupBy from "lodash.groupby";
 import uniq from "lodash.uniq";
@@ -8,10 +9,11 @@ const mapPolicy = (items: any, field: string) => {
   const layer = groupBy(items, field);
   Object.keys(layer).forEach(key => {
     ret.push({
-      id: Math.random().toString(36).substr(2),
+      id: key,
       [field]: key,
       children: layer[key].map(item => {
-        item.id = Math.random().toString(36).substr(2);
+        item[`$$${field}`] = item[field];
+        delete item[field];
         return item;
       }),
     });
@@ -21,21 +23,12 @@ const mapPolicy = (items: any, field: string) => {
 
 export const getAllPolicyFromDomain = async (ctx: Context) => {
   const appId = ctx.params.id;
-  const result = await CasbinUtil.enforcer.getFilteredPolicy(1, appId);
-  const arrayify = result.map((item, index) => {
-    return {
-      id: Math.random().toString(36).substr(2),
-      subject: item[0],
-      domain: item[1],
-      object: item[2],
-      action: item[3],
-    };
+  const roles = await getConnection().query("SELECT `id`, `v0` as `subject`, `v2` as `object`, `v3` as `action` FROM `casbin_rule` WHERE `ptype` = ? AND `v1` = ?", ["p", appId]);
+  const layer = mapPolicy(roles, 'subject').map((item: any) => {
+    item.children = mapPolicy(item.children, 'object');
+    return item;
   });
-  // const layer = mapPolicy(arrayify, 'subject').map((item: any) => {
-  //   item.children = mapPolicy(item.children, 'object');
-  //   return item;
-  // });
-  ctx.success(arrayify);
+  ctx.success(layer);
 };
 
 export const addPolicyToDomain = async (ctx: Context) => {
