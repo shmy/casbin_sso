@@ -1,0 +1,16 @@
+.DS_Store
+.vscode
+.idea
+*node_modules/
+*dist/
+*build/
+*coverage/
+/cypress/integration/examples/
+/cypress/videos/
+/cypress/screenshots/
+deploy/dist
+deploy/model.conf
+deploy/package.json
+deploy/package-lock.json
+deploy/.env
+public/uploads

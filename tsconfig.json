@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "target": "esnext",
+    "noImplicitAny": true,
+    "outDir": "./dist",
+    "sourceMap": false,
+    "allowJs": false,
+    "newLine": "LF",
+    "removeComments": true,
+    "baseUrl": "./"
+  },
+  "include": ["src/**/*"]
+}
