@@ -51,4 +51,4 @@ rpcRouter
 
 export const router = Router();
 router.post('/api/login', LoginHandler.loginHandler);
-router.get('/sso/:id/:token', LoginHandler.ssoLoginHandler);
+router.get('/api/sso/:id/:token', LoginHandler.ssoLoginHandler);

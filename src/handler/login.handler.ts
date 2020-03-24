@@ -5,6 +5,12 @@ import Bcrypt from "bcrypt";
 import {getMergePersonnelApplicationModelRepository} from "../model/merge_personnel_application.model";
 import {getApplicationModelRepository} from "../model/application.model";
 
+const btoa = (text: string) => {
+  return Buffer.from(text).toString('base64')
+};
+const atob = (base64: string) => {
+  return Buffer.from(base64, 'base64').toString('ascii');
+};
 const buildErrorHtml = (message: string) => {
   return `<!doctype html>
 <html lang="zh-CN">
@@ -51,7 +57,8 @@ export const loginHandler = async (ctx: Context) => {
   ctx.success({token});
 };
 export const ssoLoginHandler = async (ctx: Context) => {
-  const {id, token} = ctx.params;
+  let {id, token} = ctx.params;
+  token = atob(token);
   const [decoded, err] = await verifyToken(token);
   if (err) {
     ctx.fail(err.message, 401);
@@ -87,5 +94,5 @@ export const ssoLoginHandler = async (ctx: Context) => {
   record1.token = _token;
   await mReps.save(record1);
   ctx.status = 301;
-  ctx.redirect(`${record2.url}?access_token=${_token}`);
+  ctx.redirect(`${record2.url}?at=${btoa(_token)}`);
 };
