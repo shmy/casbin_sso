@@ -11,6 +11,6 @@ before_script:
 jobs:
   include:
     - stage: "Test"
-    - script: "Running Test"
+    - script: "echo Running Test"
     - stage: "Deploy"
-    - script: "Running Deploy"
+    - script: "echo Running Deploy"
