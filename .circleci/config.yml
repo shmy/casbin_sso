@@ -22,11 +22,11 @@ jobs:
       - checkout
       - node/with-cache:
           steps:
-            - run: sh ./deploy.sh
+            - run: node -v
 workflows:
   build-and-test:
     jobs:
-      - tests
+#      - tests
       - deploy:
-          requires:
-            - tests
+#          requires:
+#            - tests
