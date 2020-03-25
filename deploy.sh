@@ -11,4 +11,5 @@ MYSQL_PASSWORD=914111374
 MYSQL_DATABASE=sso" > ./deploy/.env
 cd ./deploy
 docker build -t shmy/sso:latest .
+echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
 docker push shmy/sso:latest
