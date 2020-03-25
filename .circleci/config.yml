@@ -25,9 +25,10 @@ jobs:
       - store_artifacts:
           path: coverage
   build:
+    working_directory: ~/repo
     docker:
-      - image: buildpack-deps:stable-scm
       - image: circleci/node:12.0
+      - image: buildpack-deps:stable-scm
     steps:
       - checkout
       - run:
