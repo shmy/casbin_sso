@@ -12,3 +12,6 @@ jobs:
     - script: echo Running Test
     - stage: Deploy
     - script: echo Running Deploy
+stages:
+  - Tests
+  - Deploy
