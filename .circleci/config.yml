@@ -27,8 +27,7 @@ jobs:
   build:
     working_directory: ~/repo
     docker:
-      - image: circleci/node:12.0
-      - image: buildpack-deps:stable-scm
+      - image: buildpack-deps:trusty
     steps:
       - checkout
       - run:
@@ -43,6 +42,9 @@ jobs:
       - run:
           name: check
           command: ls -a
+      - run:
+          name: docker
+          command: docker build -t a .
 
 workflows:
   version: 2
