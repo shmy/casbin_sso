@@ -12,7 +12,16 @@ jobs:
             - run: node -v
             - run: npm -v
             - run: npm install
+  deploy:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: sh ./deploy.sh
 workflows:
   build-and-test:
     jobs:
       - build-and-test
+      - deploy
