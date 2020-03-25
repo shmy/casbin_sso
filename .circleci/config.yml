@@ -16,6 +16,8 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: docker:stable
+    executor:
+      name: node/default
     steps:
       - checkout
       - node/with-cache:
