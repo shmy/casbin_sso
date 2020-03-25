@@ -12,9 +12,6 @@ jobs:
             - run: node -v
             - run: npm -v
             - run: npm install
-      - deploy:
-          steps:
-            - run: echo 1322
 workflows:
   build-and-test:
     jobs:
