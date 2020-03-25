@@ -25,13 +25,15 @@ jobs:
       - run:
           name: build
           command: npm run build
+      - run:
+          name: check
+          command: ls -a
       - store_artifacts:
           path: coverage
   build:
     docker:
       - image: buildpack-deps:stable-scm
     steps:
-      - checkout
       - run:
           command: ls
       - run:
