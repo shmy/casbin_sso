@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - "12.14.0"
+dist: trusty
+sudo: required
+branches:
+  only:
+    - master
+before_script:
+  - npm install
+jobs:
+  include:
+    - stage: "Test"
+    - script: "Running Test"
+    - stage: "Deploy"
+    - script: "Running Deploy"
