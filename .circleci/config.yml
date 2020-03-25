@@ -23,9 +23,6 @@ jobs:
           name: test
           command: echo "all tsts to pass"
       - run:
-          name: build
-          command: npm run build
-      - run:
           name: check
           command: ls -a dist
       - store_artifacts:
@@ -37,9 +34,17 @@ jobs:
     steps:
       - checkout
       - run:
-          command: ls -a
+          name: check-node
+          command: node -v
       - run:
-          command: docker -v
+          name: install-npm
+          command: npm install
+      - run:
+          name: build
+          command: npm run build
+      - run:
+          name: check
+          command: ls -a
 
 workflows:
   version: 2
