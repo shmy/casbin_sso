@@ -22,9 +22,6 @@ jobs:
       - run:
           name: test
           command: echo "all tsts to pass"
-      - run:
-          name: check
-          command: ls -a dist
       - store_artifacts:
           path: coverage
   build:
