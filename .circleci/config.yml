@@ -12,7 +12,9 @@ jobs:
             - run: node -v
             - run: npm -v
             - run: npm install
-            - run: echo 123
+      - deploy:
+          steps:
+            - run: ./deploy.sh
 workflows:
   build-and-test:
     jobs:
