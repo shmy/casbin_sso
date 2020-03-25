@@ -39,7 +39,11 @@ workflows:
   build-test-deploy:
     jobs:
       - tests
+      - build:
+          requires:
+            - tests
       - hold:
           type: approval
           requires:
             - tests
+            - build
