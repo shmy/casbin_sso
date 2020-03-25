@@ -41,4 +41,4 @@ workflows:
       - hold:
           type: approval
           requires:
-            - end-to-end-test
+            - tests
