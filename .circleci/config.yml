@@ -14,8 +14,8 @@ jobs:
             - run: npm install
   deploy:
     working_directory: ~/repo
-      docker:
-          - image: docker:stable
+    docker:
+      - image: docker:stable
     steps:
       - checkout
       - node/with-cache:
