@@ -33,7 +33,9 @@ jobs:
   build:
     docker:
       - image: buildpack-deps:stable-scm
+      - image: circleci/node:12.0
     steps:
+      - checkout
       - run:
           command: ls -a
       - run:
