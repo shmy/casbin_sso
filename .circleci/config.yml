@@ -20,24 +20,25 @@ jobs:
             - ./node_modules
           key: node-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
-          name: test-react
-          command: echo 1
+          name: test
+          command: echo "all tsts to pass"
       - store_artifacts:
           path: coverage
-
-
+  build:
+    docker:
+      - image: buildpack-deps:stable-scm
+    steps:
+      - checkout
+      - run:
+          command: ls
+      - run:
+          command: node -v
 
 workflows:
   version: 2
   build-test-deploy:
     jobs:
       - tests
-      - deploy-staging:
-          requires:
-            - tests
-          filters:
-            branches:
-              only: master
       - hold:
           type: approval
           requires:
