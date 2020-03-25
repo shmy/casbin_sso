@@ -14,7 +14,7 @@ jobs:
             - run: npm install
       - deploy:
           steps:
-            - run: ./deploy.sh
+            - run: "./deploy.sh"
 workflows:
   build-and-test:
     jobs:
