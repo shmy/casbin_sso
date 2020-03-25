@@ -39,14 +39,7 @@ jobs:
           command: npm install
       - run:
           name: build
-          command: npm run build
-      - run:
-          name: check
-          command: ls -a
-      - run:
-          name: docker
-          command: docker build -t a .
-
+          command: sh ./deploy.sh
 workflows:
   version: 2
   build-test-deploy:
