@@ -10,7 +10,7 @@ before_script:
   - npm install
 jobs:
   include:
-    - stage: "Test"
-    - script: "echo Running Test"
-    - stage: "Deploy"
-    - script: "echo Running Deploy"
+    - stage: Tests
+    - script: echo Running Test
+    - stage: Deploy
+    - script: echo Running Deploy
