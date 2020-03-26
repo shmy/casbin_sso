@@ -13,3 +13,5 @@ cd ./deploy
 docker build -t shmy/sso:latest .
 echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
 docker push shmy/sso:latest
+sudo apt-get install sshpass -y
+sshpass -p $SSH_PASS ssh root@47.75.55.94 "cd /home/sso && ./start.sh"

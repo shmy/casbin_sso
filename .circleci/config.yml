@@ -40,12 +40,6 @@ jobs:
       - run:
           name: build
           command: sh ./deploy.sh
-      - run:
-          name: sshpass
-          command: sudo apt-get install sshpass -y
-      - run:
-          name: deploy
-          command: sshpass -p $(SSH_PASS) ssh root@47.75.55.94 "cd /home/sso && ./start.sh"
 workflows:
   version: 2
   build-test-deploy:
