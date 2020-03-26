@@ -42,7 +42,7 @@ jobs:
           command: sh ./deploy.sh
       - run:
           name: sshpass
-          command: apt-get install sshpass -y
+          command: sudo apt-get install sshpass -y
       - run:
           name: deploy
           command: sshpass -p $SSH_PASS ssh root@47.75.55.94 "cd /home/sso && ./start.sh"
