@@ -56,6 +56,22 @@ jobs:
       - run:
           name: build
           command: sh ./build-staging.sh
+  deploy-product:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: check-node
+          command: node -v
+      - run:
+          name: install-npm
+          command: npm install
+      - run:
+          name: build
+          command: sh ./build-staging.sh
 workflows:
   version: 2
   build-test-deploy:
@@ -64,11 +80,19 @@ workflows:
       - deploy-development:
           requires:
             - tests
-      - hold:
+      - hold-staging:
+          type: approval
+          requires:
+            - tests
+            - deploy-development
+      - hold-product:
           type: approval
           requires:
             - tests
             - deploy-development
       - deploy-staging:
           requires:
-            - hold
+            - hold-staging
+      - deploy-product:
+          requires:
+            - hold-product
