@@ -83,12 +83,10 @@ workflows:
       - hold-staging:
           type: approval
           requires:
-            - tests
             - deploy-development
       - hold-product:
           type: approval
           requires:
-            - tests
             - deploy-development
       - deploy-staging:
           requires:
