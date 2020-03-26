@@ -68,7 +68,7 @@ workflows:
           type: approval
           requires:
             - tests
-            - build
+            - deploy-development
       - deploy-staging:
           requires:
             - hold
