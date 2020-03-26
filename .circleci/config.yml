@@ -20,11 +20,11 @@ jobs:
             - ./node_modules
           key: node-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
-          name: test
-          command: echo "all tsts to pass"
+          name: tests
+          command: echo "All Tests To Pass"
       - store_artifacts:
           path: coverage
-  build:
+  deploy-development:
     working_directory: ~/repo
     docker:
       - image: circleci/node:12.0
@@ -39,13 +39,29 @@ jobs:
           command: npm install
       - run:
           name: build
-          command: sh ./deploy.sh
+          command: sh ./build-development.sh
+  deploy-staging:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: check-node
+          command: node -v
+      - run:
+          name: install-npm
+          command: npm install
+      - run:
+          name: build
+          command: sh ./build-staging.sh
 workflows:
   version: 2
   build-test-deploy:
     jobs:
       - tests
-      - build:
+      - deploy-development:
           requires:
             - tests
       - hold:
@@ -53,3 +69,6 @@ workflows:
           requires:
             - tests
             - build
+      - deploy-staging:
+          requires:
+            - hold
