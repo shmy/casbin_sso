@@ -15,4 +15,4 @@ echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
 docker push shmy/sso:latest
 sudo apt-get update && sudo apt-get install sshpass -y
 ls -a
-sudo sshpass -p $SSH_PASS ssh root@47.75.55.94 "cd /home/sso && ./start.sh"
+sudo sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no root@47.75.55.94 "cd /home/sso && ./start.sh"
