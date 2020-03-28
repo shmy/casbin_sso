@@ -96,3 +96,9 @@ export const ssoLoginHandler = async (ctx: Context) => {
   ctx.status = 301;
   ctx.redirect(`${record2.url}?at=${btoa(_token)}`);
 };
+export const logoutHandler = async (ctx: Context) => {
+  const authUser = ctx.authUser;
+  const reps = getMergePersonnelApplicationModelRepository();
+  await reps.update( {personnel_id: authUser.id}, {token: ''});
+  ctx.success(null);
+};

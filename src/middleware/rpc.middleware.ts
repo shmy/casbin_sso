@@ -23,7 +23,11 @@ const rpcSSOMiddleware = async (ctx: Context, next: Next) => {
   const repo = getMergePersonnelApplicationModelRepository();
   const record = await repo.findOne({where: {application_id: decoded.appId, personnel_id: decoded.personnelId}});
   if (!record) {
-    ctx.fail("你的账户已在别处登录，请重新登录", 401);
+    ctx.fail("你没有此应用的访问权限", 401);
+    return;
+  }
+  if (record.token !== token) {
+    ctx.fail("你已在别处登录，请重新登录", 401);
     return;
   }
   const repo1 = getPersonnelModelRepository();
