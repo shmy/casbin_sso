@@ -105,3 +105,29 @@ export const removeRoleToPersonnelFromDomain = async (ctx: Context) => {
   // await CasbinUtil.enforcer.savePolicy();
   ctx.success(result);
 };
+
+export const exportPolicyFromDomain = async (ctx: Context) => {
+  const appId = ctx.params.id;
+  const roles = await getConnection().query("SELECT `v0` as `subject`, `v2` as `object`, `v3` as `action` FROM `casbin_rule` WHERE `ptype` = ? AND `v1` = ?", ["p", appId]);
+  ctx.success(roles);
+};
+export const importPolicyToDomain = async (ctx: Context) => {
+  const appId = ctx.params.id;
+  const body = ctx.request.body;
+  if (!Array.isArray(body)) {
+    ctx.fail('导入数据格式不正确');
+    return;
+  }
+  const total = body.length;
+  let successfulCount = 0;
+  for (const data of body) {
+    const result = await CasbinUtil.enforcer.addPolicy(data.subject, appId, data.object, data.action);
+    if (result) {
+      successfulCount ++;
+    }
+  }
+  ctx.success({
+    total,
+    successfulCount
+  });
+};

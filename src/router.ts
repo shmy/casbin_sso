@@ -33,6 +33,8 @@ v1Router
   .post('/policy/:id', casbinHandler.addPolicyToDomain)
   .put('/policy/:id/update', casbinHandler.updatePolicyFromDomain)
   .put('/policy/:id/remove', casbinHandler.removePolicyFromDomain)
+  .get('/policy/:id/export', casbinHandler.exportPolicyFromDomain)
+  .post('/policy/:id/import', casbinHandler.importPolicyToDomain)
   .get('/personnel', personnelHandler.listPersonnelHandler)
   .get('/personnel/option', personnelHandler.allOptionPersonnelHandler)
   .get('/personnel/apps', personnelHandler.listApplicationHandler)
