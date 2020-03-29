@@ -4,18 +4,28 @@ import CasbinUtil from "../util/casbin.util";
 import groupBy from "lodash.groupby";
 import uniq from "lodash.uniq";
 
-const mapPolicy = (items: any, field: string) => {
+const mapPolicy = (items: any, field: string, parent = '') => {
   const ret: any = [];
   const layer = groupBy(items, field);
   Object.keys(layer).forEach(key => {
+    let children = layer[key].map(item => {
+      item[`$$${field}`] = item[field];
+      delete item[field];
+      return item;
+    });
+    const layer2 = groupBy(children, 'action');
+    children = Object.keys(layer2).map(key => {
+      const first = layer2[key][0];
+      return {
+        [`$$${field}`]: first[`$$${field}`],
+        action: key,
+      };
+    });
     ret.push({
       id: key,
       [field]: key,
-      children: layer[key].map(item => {
-        item[`$$${field}`] = item[field];
-        delete item[field];
-        return item;
-      }),
+      parent,
+      children,
     });
   });
   return ret;
@@ -23,14 +33,47 @@ const mapPolicy = (items: any, field: string) => {
 
 export const getAllPolicyFromDomain = async (ctx: Context) => {
   const appId = ctx.params.id;
-  const roles = await getConnection().query("SELECT `id`, `v0` as `subject`, `v2` as `object`, `v3` as `action` FROM `casbin_rule` WHERE `ptype` = ? AND `v1` = ?", ["p", appId]);
-  const layer = mapPolicy(roles, 'subject').map((item: any) => {
-    item.children = mapPolicy(item.children, 'object');
-    return item;
-  });
+  const roles = await getConnection().query("SELECT DISTINCT `v0` as `subject` FROM `casbin_rule` WHERE `ptype` = ? AND `v1` = ?", ["p", appId]);
+  // const layer = mapPolicy(roles, 'subject').map((item: any) => {
+  //   item.children = mapPolicy(item.children, 'object', item.subject);
+  //   return item;
+  // });
+  ctx.success(roles);
+};
+
+// 获取某个App下的所有的权限
+export const getAllObjectWithAction = async (ctx: Context) => {
+  const appId = ctx.params.id;
+  const roles = await getConnection().query("SELECT `id`, `v2` as `object`, `v3` as `action` FROM `casbin_rule` WHERE `ptype` = ? AND `v1` = ?", ["p", appId]);
+  const layer = mapPolicy(roles, 'object');
   ctx.success(layer);
 };
 
+// 获取某个App下某个角色的所有的权限
+export const getAllObjectWithActionByRole = async (ctx: Context) => {
+  const appId = ctx.params.id;
+  const role = ctx.query.role;
+  const result = await getConnection().query("SELECT `id`, `v2` as `object`, `v3` as `action` FROM `casbin_rule` WHERE `ptype` = ? AND `v0` = ? AND `v1` = ?", ["p", role, appId]);
+  ctx.success(result.map((item: any) => {
+    return `${item.object} ${item.action}`;
+  }));
+};
+// 更新某个App下某个角色的权限
+export const updateObjectWithActionByRole = async (ctx: Context) => {
+  const appId = ctx.params.id;
+  const {subject, deleted, created} = ctx.request.body;
+  if (Array.isArray(deleted)) {
+    for (const item of deleted) {
+      await CasbinUtil.enforcer.removePolicy(subject, appId, item.object, item.action);
+    }
+  }
+  if (Array.isArray(created)) {
+    for (const item of created) {
+      await CasbinUtil.enforcer.addPolicy(subject, appId, item.object, item.action);
+    }
+  }
+  ctx.success(null);
+};
 export const addPolicyToDomain = async (ctx: Context) => {
   const appId = ctx.params.id;
   const data = ctx.request.body;

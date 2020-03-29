@@ -30,8 +30,11 @@ v1Router
   // 角色
   .get('/initial_data', personnelHandler.getInitialDataHandler)
   .get('/policy/:id', casbinHandler.getAllPolicyFromDomain)
+  .get('/policy/:id/oc', casbinHandler.getAllObjectWithAction)
+  .get('/policy/:id/oc_by_role', casbinHandler.getAllObjectWithActionByRole)
   .post('/policy/:id', casbinHandler.addPolicyToDomain)
   .put('/policy/:id/update', casbinHandler.updatePolicyFromDomain)
+  .put('/policy/:id/update_by_role', casbinHandler.updateObjectWithActionByRole)
   .put('/policy/:id/remove', casbinHandler.removePolicyFromDomain)
   .get('/policy/:id/export', casbinHandler.exportPolicyFromDomain)
   .post('/policy/:id/import', casbinHandler.importPolicyToDomain)
