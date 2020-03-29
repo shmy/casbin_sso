@@ -8,7 +8,7 @@ const hashPassword = (password: string) => Bcrypt.hash(password, saltRounds);
 @Entity({name: "personnel"})
 class PersonnelModel extends BasicModel {
 
-  @Column({length: 32}) username: string;
+  @Column({length: 32, unique: true}) username: string;
   @Column({length: 128, select: false}) password: string;
   @Column({name: 'avatar_url', length: 255, default: ''}) avatar_url: string;
   @Column({name: 'real_name', length: 16, default: ''}) real_name: string;
@@ -16,7 +16,7 @@ class PersonnelModel extends BasicModel {
   @Column({length: 64, default: ''}) email: string;
   @Column({default: true}) enable: boolean;
   @Column({type: 'text', select: false}) keyword: string;
-  @Column({type: 'text', default: null, select: false}) token: string;
+  @Column({type: 'text', select: false}) token: string = '';
   @Column({default: false}) admin: boolean;
 
   @BeforeInsert()

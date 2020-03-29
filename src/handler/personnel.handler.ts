@@ -1,4 +1,5 @@
-import {mapCreate, mapList, mapRemove, mapUpdate} from "./basic.handler";
+import {mapList, mapRemove} from "./basic.handler";
+import {getConnection} from "typeorm";
 import PersonnelModel, {
   getPersonnelModelDescriptor,
   getPersonnelModelInstance,
@@ -6,6 +7,7 @@ import PersonnelModel, {
 } from "../model/personnel.model";
 import {Context} from "koa";
 import {getApplicationModelRepository} from "../model/application.model";
+import validate from "../util/validator.util";
 
 export const allOptionPersonnelHandler = async (ctx: Context) => {
   const repo = getPersonnelModelRepository();
@@ -23,8 +25,51 @@ export const allOptionPersonnelHandler = async (ctx: Context) => {
   }));
 };
 export const listPersonnelHandler = mapList<PersonnelModel>(getPersonnelModelRepository, 'keyword');
-export const createPersonnelHandler = mapCreate<PersonnelModel>(getPersonnelModelRepository, getPersonnelModelDescriptor, getPersonnelModelInstance);
-export const updatePersonnelHandler = mapUpdate<PersonnelModel>(getPersonnelModelRepository, getPersonnelModelUpdateDescriptor);
+export const createPersonnelHandler = async (ctx: Context) => {
+  const params = ctx.request.body;
+  const [values, msg] = await validate(getPersonnelModelDescriptor(), params);
+  if (msg) {
+    ctx.fail(msg);
+    return;
+  }
+  const repo = getPersonnelModelRepository();
+  let record = await repo.findOne({where: {username: values.username}});
+  if (record) {
+    ctx.fail('用户名已存在');
+    return;
+  }
+  const entity = Object.assign(getPersonnelModelInstance(), values);
+  record = await repo.save(entity);
+  ctx.success(await repo.findOne(record.id));
+};
+export const updatePersonnelHandler = async (ctx: Context) => {
+  const {id} = ctx.params;
+  const params = ctx.request.body;
+  const [values, msg] = await validate(getPersonnelModelUpdateDescriptor(), params);
+  if (msg) {
+    ctx.fail(msg);
+    return;
+  }
+
+  await getConnection().transaction(async transactionalEntityManager => {
+    const record = await transactionalEntityManager.findOne(PersonnelModel, id);
+    if (!record) {
+      ctx.fail("记录不存在");
+      return;
+    }
+    if (values.username !== record.username) {
+      // 更换了用户名
+      const record = await transactionalEntityManager.findOne(PersonnelModel, {where: {username: values.username}});
+      if (record) {
+        ctx.fail("用户名已存在");
+        return;
+      }
+    }
+    const entity = transactionalEntityManager.merge(PersonnelModel, record, values);
+    await transactionalEntityManager.save(entity);
+    ctx.success(await transactionalEntityManager.findOne(PersonnelModel, id));
+  });
+};
 export const removePersonnelHandler = mapRemove<PersonnelModel>(getPersonnelModelRepository);
 export const getInitialDataHandler = async (ctx: Context) => {
   let menu = [
