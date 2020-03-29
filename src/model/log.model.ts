@@ -19,7 +19,7 @@ class LogModel extends BasicModel {
     if (this.ip) {
       const p = lookup(this.ip);
       if (p) {
-        this.region = p.country + p.city;
+        this.region = p.country + ' / ' + p.city;
       }
     }
   }
