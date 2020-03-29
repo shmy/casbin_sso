@@ -1,8 +1,16 @@
-import {CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn} from "typeorm";
+import {BeforeInsert, BeforeUpdate, Column, PrimaryGeneratedColumn} from "typeorm";
 
 class BasicModel {
   @PrimaryGeneratedColumn({type: "bigint"}) id: number;
-  @CreateDateColumn({name: "created_at", type: "timestamp"}) created_at: Date;
-  @UpdateDateColumn({name: "updated_at", type: "timestamp"}) updated_at: Date;
+  @Column({name: "created_at", type: "datetime"}) created_at: Date;
+  @Column({name: "updated_at", type: "datetime"}) updated_at: Date;
+  @BeforeInsert()
+  createDate() {
+    this.created_at = this.updated_at = new Date();
+  }
+  @BeforeUpdate()
+  updateDate() {
+    this.updated_at = new Date();
+  }
 }
 export default BasicModel;
