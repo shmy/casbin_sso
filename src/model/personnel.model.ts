@@ -16,7 +16,7 @@ class PersonnelModel extends BasicModel {
   @Column({length: 64, default: ''}) email: string;
   @Column({default: true}) enable: boolean;
   @Column({type: 'text', select: false}) keyword: string;
-  @Column({type: 'text', select: false}) token: string = '';
+  @Column({type: 'text', nullable: false, select: false}) token: string = '';
   @Column({default: false}) admin: boolean;
 
   @BeforeInsert()
