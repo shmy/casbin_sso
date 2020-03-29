@@ -4,6 +4,7 @@ import * as applicationHandler from "./handler/application.handler";
 import * as personnelHandler from "./handler/personnel.handler";
 import * as RpcHandler from "./handler/rpc.handler";
 import * as LoginHandler from "./handler/login.handler";
+import * as logHandler from "./handler/log.handler";
 import uploadHandler from "./handler/upload.handler";
 import authenticationMiddleware from "./middleware/authentication.middleware";
 import rpcSSOMiddleware from "./middleware/rpc.middleware";
@@ -39,12 +40,15 @@ v1Router
   // .put('/policy/:id/remove', casbinHandler.removePolicyFromDomain)
   .get('/policy/:id/export', casbinHandler.exportPolicyFromDomain)
   .post('/policy/:id/import', casbinHandler.importPolicyToDomain)
+  // 人员
   .get('/personnel', personnelHandler.listPersonnelHandler)
   .get('/personnel/option', personnelHandler.allOptionPersonnelHandler)
   .get('/personnel/apps', personnelHandler.listApplicationHandler)
   .post('/personnel', personnelHandler.createPersonnelHandler)
   .put('/personnel/:id', personnelHandler.updatePersonnelHandler)
-  .del('/personnel/:id', personnelHandler.removePersonnelHandler);
+  .del('/personnel/:id', personnelHandler.removePersonnelHandler)
+  // 登录日志
+  .get('/log', logHandler.listLog);
 
 export const rpcRouter = Router().prefix("/rpc/v1");
 rpcRouter
@@ -55,7 +59,8 @@ rpcRouter
   .get("/get_users_by_ids", RpcHandler.getUsersByIdsHandler)
   .get("/get_users_paging", RpcHandler.getUsersPagingHandler);
 
-export const router = Router();
-router.post('/api/login', LoginHandler.loginHandler);
-router.get('/api/sso/:id/:token', LoginHandler.ssoLoginHandler);
-router.delete('/api/logout', authenticationMiddleware, LoginHandler.logoutHandler);
+export const authRouter = Router();
+authRouter
+  .post('/api/login', LoginHandler.loginHandler)
+  .get('/api/sso/:id/:token', LoginHandler.ssoLoginHandler)
+  .delete('/api/logout', authenticationMiddleware, LoginHandler.logoutHandler);

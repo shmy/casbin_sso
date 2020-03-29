@@ -90,6 +90,11 @@ export const getInitialDataHandler = async (ctx: Context) => {
         path: '/personnel',
         name: '人员管理',
         icon: 'HomeOutlined',
+      },
+      {
+        path: '/log',
+        name: '登录日志',
+        icon: 'HomeOutlined',
       }
     ]);
   }

@@ -4,6 +4,7 @@ import {generateSSOToken, generateToken, verifyToken} from "../util/token.util";
 import Bcrypt from "bcrypt";
 import {getMergePersonnelApplicationModelRepository} from "../model/merge_personnel_application.model";
 import {getApplicationModelRepository} from "../model/application.model";
+import {pushLoginLog} from "../util/log.util";
 
 const btoa = (text: string) => {
   return Buffer.from(text).toString('base64')
@@ -68,31 +69,37 @@ export const ssoLoginHandler = async (ctx: Context) => {
   const repo = getPersonnelModelRepository();
   const record = await repo.findOne({where: {token, id: decoded.id}});
   if (!record) {
+    pushLoginLog(ctx, record.id, id, false);
     ctx.body = buildErrorHtml("你的账户已在别处登录，请重新登录");
     return;
   }
   const mReps = getMergePersonnelApplicationModelRepository();
   const record1 = await mReps.findOne({where: {application_id: id, personnel_id: record.id}});
   if (!record1) {
+    pushLoginLog(ctx, record.id, id, false);
     ctx.body = buildErrorHtml("你没有此系统的权限");
     return;
   }
   const record2 = await getApplicationModelRepository().findOne({where: {id}});
   if (!record2) {
+    pushLoginLog(ctx, record.id, id, false);
     ctx.body = buildErrorHtml("此应用不存在");
     return;
   }
   if (!record2.enable) {
+    pushLoginLog(ctx, record.id, id, false);
     ctx.body = buildErrorHtml("此应用已关闭");
     return;
   }
   const [_token, _err] = await generateSSOToken(record2.id, record.id);
   if (_err) {
+    pushLoginLog(ctx, record.id, id, false);
     ctx.body = buildErrorHtml("登录失败");
     return;
   }
   record1.token = _token;
   await mReps.save(record1);
+  pushLoginLog(ctx, record.id, id);
   ctx.status = 301;
   ctx.redirect(`${record2.url}?at=${btoa(_token)}`);
 };

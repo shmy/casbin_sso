@@ -4,12 +4,13 @@ import Path from 'path';
 import KoaBodyParser from 'koa-bodyparser';
 import KoaStatic from 'koa-static';
 import KoaMount from 'koa-mount';
-import {router, rpcRouter, v1Router} from "./router";
+import {authRouter, rpcRouter, v1Router} from "./router";
 import CasbinUtil from "./util/casbin.util";
 import ApplicationModel from "./model/application.model";
 import MergePersonnelApplicationModel from "./model/merge_personnel_application.model";
 import PersonnelModel, {initializeAdmin} from "./model/personnel.model";
 import dotenv from "dotenv";
+import LogModel from "./model/log.model";
 
 dotenv.config({path: Path.join(__dirname, '../.env')});
 
@@ -32,8 +33,9 @@ const config: ConnectionOptions = {
       MergePersonnelApplicationModel,
       ApplicationModel,
       PersonnelModel,
+      LogModel,
     ],
-    logging: true,
+    logging: false,
     logger: "advanced-console",
     synchronize: true,
     bigNumberStrings: false,
@@ -41,7 +43,7 @@ const config: ConnectionOptions = {
   await CasbinUtil.initialize(config, modelFileUrl);
   await initializeAdmin();
   const app = new Koa();
-
+  app.proxy = true;
   app
     .use(KoaMount('/static', KoaStatic(Path.join(__dirname, '../public'))))
     .use(KoaBodyParser({
@@ -65,7 +67,7 @@ const config: ConnectionOptions = {
     })
     .use(v1Router.middleware())
     .use(rpcRouter.middleware())
-    .use(router.middleware())
+    .use(authRouter.middleware())
     .use(ctx => {
       ctx.status = 404;
       ctx.body = {msg: 'not found'}
