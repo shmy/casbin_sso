@@ -74,6 +74,13 @@ export const updateObjectWithActionByRole = async (ctx: Context) => {
   }
   ctx.success(null);
 };
+export const removeRoleFromDomain = async (ctx: Context) => {
+  const role = ctx.query.role;
+  const appId = ctx.params.id;
+  await CasbinUtil.enforcer.removeFilteredGroupingPolicy(1, role, appId);
+  await CasbinUtil.enforcer.removeFilteredPolicy(0, role, appId);
+  ctx.success(null);
+};
 export const addPolicyToDomain = async (ctx: Context) => {
   const appId = ctx.params.id;
   const data = ctx.request.body;
