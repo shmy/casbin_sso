@@ -1,17 +1,14 @@
-rm -rf ./deploy/dist ./deploy/model.conf ./deploy/package.json ./deploy/package-lock.json ./deploy/.env
 npm run build
+rm -rf ./deploy
+mkdir -p ./deploy
 mv ./dist ./deploy/dist
 cp ./model.conf ./deploy/model.conf
 cp ./package.json ./deploy/package.json
 cp ./package-lock.json ./deploy/package-lock.json
-echo "MYSQL_HOST=172.17.0.1
-MYSQL_PORT=3306
-MYSQL_USERNAME=root
-MYSQL_PASSWORD=914111374
-MYSQL_DATABASE=sso" > ./deploy/.env
+cp ./Dockerfile ./deploy/Dockerfile
 cd ./deploy
 docker build -t shmy/sso:latest .
-echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-docker push shmy/sso:latest
-sudo apt-get update && sudo apt-get install sshpass -y
-sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no root@47.75.55.94 "cd /home/sso && ./start.sh"
+#echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+#docker push shmy/sso:latest
+#sudo apt-get update && sudo apt-get install sshpass -y
+#sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no root@47.75.55.94 "cd /home/sso && ./start.sh"

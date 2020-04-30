@@ -9,6 +9,5 @@ export const listLog = async (ctx: Context) => {
   const countSql = "SELECT COUNT(`log`.`id`) AS `count` FROM `log`";
   const result = await repo.query(sql);
   const count = await repo.query(countSql);
-  // TODO: count.cnt is undefined on production
-  ctx.success({result: result, ...count});
+  ctx.success({result: result, count: count[0].count});
 };

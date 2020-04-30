@@ -4,17 +4,15 @@ import Path from 'path';
 import KoaBodyParser from 'koa-bodyparser';
 import KoaStatic from 'koa-static';
 import KoaMount from 'koa-mount';
-import {authRouter, rpcRouter, v1Router} from "./router";
+import {authRouter, v1Router} from "./router";
 import CasbinUtil from "./util/casbin.util";
 import ApplicationModel from "./model/application.model";
 import MergePersonnelApplicationModel from "./model/merge_personnel_application.model";
 import PersonnelModel, {initializeAdmin} from "./model/personnel.model";
-import dotenv from "dotenv";
 import LogModel from "./model/log.model";
+import env from "./env";
 
-dotenv.config({path: Path.join(__dirname, '../.env')});
-
-const {MYSQL_HOST, MYSQL_PORT, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE} = process.env;
+const {SERVER_PORT, MYSQL_HOST, MYSQL_PORT, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE} = env;
 
 const modelFileUrl = Path.join(__dirname, '../model.conf');
 const config: ConnectionOptions = {
@@ -35,7 +33,7 @@ const config: ConnectionOptions = {
       PersonnelModel,
       LogModel,
     ],
-    logging: false,
+    logging: true,
     logger: "advanced-console",
     synchronize: true,
     bigNumberStrings: false,
@@ -66,12 +64,14 @@ const config: ConnectionOptions = {
       }
     })
     .use(v1Router.middleware())
-    .use(rpcRouter.middleware())
+    // .use(rpcRouter.middleware())
     .use(authRouter.middleware())
     .use(ctx => {
       ctx.status = 404;
       ctx.body = {msg: 'not found'}
     });
 
-  app.listen(3000);
+  app.listen(SERVER_PORT, () => {
+    console.info('Server started at: ' + SERVER_PORT);
+  });
 })();

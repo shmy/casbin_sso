@@ -5,6 +5,7 @@ import {getBetweenLengthOptionalRule, getBetweenLengthRule, getRequiredRule} fro
 
 const saltRounds = 10;
 const hashPassword = (password: string) => Bcrypt.hash(password, saltRounds);
+
 @Entity({name: "personnel"})
 class PersonnelModel extends BasicModel {
 
@@ -38,13 +39,14 @@ class PersonnelModel extends BasicModel {
     }
   }
 }
-export const getPersonnelModelRepository =  () => getRepository(PersonnelModel);
-export const getPersonnelModelInstance =  () => new PersonnelModel();
-export const getPersonnelModelDescriptor =  () => ({
+
+export const getPersonnelModelRepository = () => getRepository(PersonnelModel);
+export const getPersonnelModelInstance = () => new PersonnelModel();
+export const getPersonnelModelDescriptor = () => ({
   username: [getRequiredRule("用户名"), getBetweenLengthRule("用户名", 4, 16)],
   password: [getRequiredRule("密码"), getBetweenLengthRule("密码", 4, 32)],
 });
-export const getPersonnelModelUpdateDescriptor =  () => ({
+export const getPersonnelModelUpdateDescriptor = () => ({
   username: [getRequiredRule("用户名"), getBetweenLengthRule("用户名", 4, 16)],
   password: [getBetweenLengthOptionalRule("密码", 4, 32)],
 });

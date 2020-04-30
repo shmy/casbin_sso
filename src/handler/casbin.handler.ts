@@ -1,19 +1,18 @@
 import {Context} from "koa";
 import {getConnection} from "typeorm";
 import CasbinUtil from "../util/casbin.util";
-import groupBy from "lodash.groupby";
-import uniq from "lodash.uniq";
+import R from "ramda";
 
 const mapPolicy = (items: any, field: string, parent = '') => {
   const ret: any = [];
-  const layer = groupBy(items, field);
+  const layer = R.groupBy<any>(R.prop(field), items);
   Object.keys(layer).forEach(key => {
     let children = layer[key].map(item => {
       item[`$$${field}`] = item[field];
       delete item[field];
       return item;
     });
-    const layer2 = groupBy(children, 'action');
+    const layer2 = R.groupBy(R.prop('action'), children);
     children = Object.keys(layer2).map(key => {
       const first = layer2[key][0];
       return {
@@ -130,7 +129,7 @@ export const getAllRoleByPersonnelFromDomain = async (ctx: Context) => {
   const personnelId = ctx.params.pid;
   const has = await CasbinUtil.enforcer.getRolesForUser(personnelId, appId);
   const _all = await CasbinUtil.enforcer.getFilteredPolicy(1, appId);
-  const all = uniq(_all.map(item => item[0]));
+  const all = R.uniq(_all.map(item => item[0]));
   const result = all.map(item => {
     return {
       label: item,

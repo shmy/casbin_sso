@@ -1,6 +1,7 @@
 import {sign, verify} from "jsonwebtoken";
+import env from "../env";
 
-const secret = "1jfh3kf";
+const {SERVER_JWT_SECRET} = env;
 const sso_secret = "dsdda1jfh3kf";
 
 export const generateSSOToken: (appId: number, personnelId: number) => Promise<[string | null, Error | null]> = (appId: number, personnelId: number) => {
@@ -31,7 +32,7 @@ export const verifySSOToken: (token: string) => Promise<[{appId: number, personn
 export const generateToken: (id: number) => Promise<[string | null, Error | null]> = (id: number) => {
   return new Promise((resolve) => {
     // 一天有效
-    sign({id}, secret, {expiresIn: '1d'}, (err: Error | null, token: string) => {
+    sign({id}, SERVER_JWT_SECRET, {expiresIn: '1d'}, (err: Error | null, token: string) => {
       if (err) {
         resolve([null, err]);
         return;
@@ -42,7 +43,8 @@ export const generateToken: (id: number) => Promise<[string | null, Error | null
 };
 export const verifyToken: (token: string) => Promise<[{id: number} | null, Error | null]> = (token: string) => {
   return new Promise((resolve) => {
-    verify(token, secret, (err, decoded) => {
+    // @ts-ignore
+    verify(token, SERVER_JWT_SECRET, (err, decoded) => {
       if (err) {
         resolve([null, err]);
         return;

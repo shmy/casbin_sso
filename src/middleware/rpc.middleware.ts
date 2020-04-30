@@ -26,10 +26,6 @@ const rpcSSOMiddleware = async (ctx: Context, next: Next) => {
     ctx.fail("你没有此应用的访问权限", 401);
     return;
   }
-  if (record.token !== token) {
-    ctx.fail("你已在别处登录，请重新登录", 401);
-    return;
-  }
   const repo1 = getPersonnelModelRepository();
   const record1 = await repo1.findOne({where: {id: decoded.personnelId}});
   if (!record1) {

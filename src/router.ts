@@ -2,12 +2,10 @@ import Router from 'koa-joi-router';
 import * as casbinHandler from "./handler/casbin.handler";
 import * as applicationHandler from "./handler/application.handler";
 import * as personnelHandler from "./handler/personnel.handler";
-import * as RpcHandler from "./handler/rpc.handler";
 import * as LoginHandler from "./handler/login.handler";
 import * as logHandler from "./handler/log.handler";
 import uploadHandler from "./handler/upload.handler";
 import authenticationMiddleware from "./middleware/authentication.middleware";
-import rpcSSOMiddleware from "./middleware/rpc.middleware";
 
 export const v1Router = Router().prefix("/api/v1");
 v1Router
@@ -50,14 +48,14 @@ v1Router
   // 登录日志
   .get('/log', logHandler.listLog);
 
-export const rpcRouter = Router().prefix("/rpc/v1");
-rpcRouter
-  .use(rpcSSOMiddleware)
-  .post("/check_action_by_token", RpcHandler.checkActionByToken)
-  .get("/get_user_by_token", RpcHandler.getUserByTokenHandler)
-  .get("/get_permissions_by_token", RpcHandler.getPermissionsByTokenHandler)
-  .get("/get_users_by_ids", RpcHandler.getUsersByIdsHandler)
-  .get("/get_users_paging", RpcHandler.getUsersPagingHandler);
+// export const rpcRouter = Router().prefix("/rpc/v1");
+// rpcRouter
+//   .use(rpcSSOMiddleware)
+//   .post("/check_action_by_token", RpcHandler.checkActionByToken)
+//   .get("/get_user_by_token", RpcHandler.getUserByTokenHandler)
+//   .get("/get_permissions_by_token", RpcHandler.getPermissionsByTokenHandler)
+//   .get("/get_users_by_ids", RpcHandler.getUsersByIdsHandler)
+//   .get("/get_users_paging", RpcHandler.getUsersPagingHandler);
 
 export const authRouter = Router();
 authRouter
