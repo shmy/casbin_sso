@@ -12,7 +12,7 @@ import PersonnelModel, {initializeAdmin} from "./model/personnel.model";
 import LogModel from "./model/log.model";
 import env from "./env";
 
-const {SERVER_PORT, MYSQL_HOST, MYSQL_PORT, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE} = env;
+const {SERVER_LISTEN_PORT, MYSQL_HOST, MYSQL_PORT, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE} = env;
 
 const modelFileUrl = Path.join(__dirname, '../model.conf');
 const config: ConnectionOptions = {
@@ -71,7 +71,7 @@ const config: ConnectionOptions = {
       ctx.body = {msg: 'not found'}
     });
 
-  app.listen(SERVER_PORT, () => {
-    console.info('Server started at: ' + SERVER_PORT);
+  app.listen(SERVER_LISTEN_PORT, () => {
+    console.info('Server started at: ' + SERVER_LISTEN_PORT);
   });
 })();
