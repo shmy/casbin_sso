@@ -39,7 +39,7 @@
     "dayjs": "^1.8.23",
     "dotenv": "^8.2.0",
     "geoip-lite": "^1.4.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^6.0.2",
